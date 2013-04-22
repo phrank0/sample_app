@@ -79,6 +79,37 @@ describe "User pages" do
     end
   end
 
+  describe "micropost pagination" do
+    let(:user) { FactoryGirl.create(:user) }
+
+    before do
+      31.times { FactoryGirl.create(:micropost, user: user, content: "Foo") } 
+      visit user_path(user)
+    end
+
+    it { should have_selector('div.pagination') }
+
+    it "should list each micropost" do
+      user.microposts.paginate(page: 1).each do |micropost|
+        should have_selector('li', text: micropost.content)
+      end
+    end
+
+  end
+
+  describe "user should not be able to delete another user's microposts" do
+    let(:user1) { FactoryGirl.create(:user) }
+    let(:user2) { FactoryGirl.create(:user) }
+
+    before do
+      FactoryGirl.create(:micropost, user: user2, content: "Foo")
+      sign_in user1
+      visit user_path(user2)
+    end
+
+    it { should_not have_link('delete') }    
+  end
+
   describe "signup" do
 
     before { visit signup_path }

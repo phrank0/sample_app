@@ -31,6 +31,10 @@ describe "Static pages" do
           page.should have_selector("li##{item.id}", text: item.content)
         end
       end
+
+      specify "sidebar should contain properly-pluralized micropost count" do
+        should have_selector('aside', text: '2 microposts')
+      end
     end
   end
 
